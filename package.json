@@ -1,11 +1,10 @@
 {
   "name": "apitable-settings-generator",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Generate settings with APITable power.",
   "main": "./dist/index.js",
   "bin": {
-    "asg": "./bin/index.js",
-    "apitable-settings-generator": "./bin/index.js"
+    "asg": "./bin/index.js"
   },
   "types": "./types/index.d.ts",
   "files": [
