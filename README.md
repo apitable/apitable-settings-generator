@@ -11,32 +11,37 @@ APITable Settings Generator convert APITable datasheet into JSON data.
 
 For example, you have [APITable](https://apitable.com) like this:
 
-| name           | emoji |
-| -------------- | ----- |
-| jack_o_lantern | 🎃    |
-| christmas_tree | 🎄    |
-| fireworks      | 🎆    |
-| sparkler       | 🎇    |
-| firecracker    | 🧨    |
+| name           | emoji | category |
+| -------------- | ----- | -------- |
+| jack_o_lantern | 🎃    | A        |
+| christmas_tree | 🎄    | B        |
+| fireworks      | 🎆    | A        |
+| sparkler       | 🎇    | C        |
+| firecracker    | 🧨    | D        |
 
 It will generate JSON settings like this:
 
 ```json
 {
   "jack_o_lantern": {
-    "emoji": "🎃"
+    "emoji": "🎃",
+    "category": "A"
   },
   "christmas_tree": {
-    "emoji": "🎄"
+    "emoji": "🎄",
+    "category": "B"
   },
   "fireworks": {
-    "emoji": "🎆"
+    "emoji": "🎆",
+    "category": "A"
   },
   "sparkler": {
-    "emoji": "🎇"
+    "emoji": "🎇",
+    "category": "C"
   },
   "firecracker": {
-    "emoji": "🧨"
+    "emoji": "🧨",
+    "category": "D"
   }
 }
 ```
