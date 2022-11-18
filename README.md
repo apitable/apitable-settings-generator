@@ -204,3 +204,8 @@ Generated settings `i18n.generated.json`:
   ]
 }
 ```
+
+## Conventions
+
+- Ignore the column that name starts with `.`;
+- Ignore the Primary Key that valut starts with `.`;

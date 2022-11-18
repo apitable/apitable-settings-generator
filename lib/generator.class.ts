@@ -67,55 +67,24 @@ export class Generator {
       config.dirName,
       config.fileName
     );
-    console.log("\n==========开始============");
-    console.log("写入文件路径开始: %s", outputPath);
+    console.log("\n==========Getting start============");
+    console.log("Start writting file: %s", outputPath);
     const begin = +new Date();
 
-
-
-    // 解析多个表返回对象
-    // const tableData = await this.parseTables(config.tables);
-    // // 处理关联表数据替换
-    // this._transformer.handleRelateRecord();
 
     // write into file
     const outputJson = JSON.stringify(tableData, null, 4);
     fs.writeFile(outputPath, outputJson, (err) => {
       if (err !== null) {
-        console.error("写入失败");
+        console.error("Write failed");
         console.error(err);
         return;
       }
     });
     const end = +new Date();
-    console.log("写入文件完成，耗时: %d 秒", (end - begin) / 1000);
-    console.log("==========结束============");
+    console.log("Write finished，Time: %d seconds", (end - begin) / 1000);
+    console.log("==========End============");
   }
-
-  /**
-   * parse multi tables
-   * 
-   * @param tableConfigs configs
-   */
-  // async parseTables(tableConfigs: ITableConfig[]): Promise<object> {
-  //   const tableObjects: { [key: string]: object } = {};
-
-  //   // 处理生成json所需要的多个表格组合数据
-  //   for (const tableConfig of tableConfigs) {
-  //     // 请求获取表数据
-  //     const records = await this.requestData(
-  //       tableConfig.datasheetId,
-  //       tableConfig.params
-  //     );
-  //     const result = this._transformer.parseTable(tableConfig, records);
-
-  //     tableObjects[tableConfig.datasheetName] = result;
-
-  //   }
-  //   const res = dot.object(tableObjects) as { [key: string]: any };
-  //   delete res[""];
-  //   return res;
-  // }
 
   /**
    * requiest data by APITable API Client

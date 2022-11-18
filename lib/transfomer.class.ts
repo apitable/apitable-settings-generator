@@ -40,7 +40,7 @@ export class Transformer {
       };
 
     }
-    // 处理关联表数据替换
+    // relation datasheets replacement
     this.handleRelateRecord();
 
     return resultMap;
@@ -55,7 +55,7 @@ export class Transformer {
    public parseTables(tableConfigs: ITableConfig[]): object {
     const tableObjects: { [key: string]: any } = {};
 
-    // 处理生成json所需要的多个表格组合数据
+    // multi table process
     for (const tableConfig of tableConfigs) {
       const records = this._requestedData[tableConfig.datasheetId];
       const result = this.parseTable(tableConfig, records);
@@ -87,35 +87,37 @@ export class Transformer {
   public parseTable(tableConfig: ITableConfig, records: IRecord[]) {
     const recordList: object[] = [];
 
-    console.log("表:[%s], 行数: %d", tableConfig.datasheetName, records.length);
-    // 循环行记录
+    console.log("Table:[%s], Lines: %d", tableConfig.datasheetName, records.length);
+    // loop the records
     for (const record of records) {
       const { fields, recordId } = record;
       if (fields.id !== undefined) {
-        // 没写id列的，就跳过
+        // if no ID field, ignore it.
+
         const fieldId = fields.id;
-        // 移除 . 开头的用于注释的 key，再解析。
+
+        // Remove the key used for comments at the beginning with ".", and then parse agia again
         const dotObj = dot.object(this.filter(fields)) as {
           [key: string]: any;
         };
-        // 移除为空的 KEY
+        // remove empty key
         delete dotObj[""];
-        // 缓存记录，以recordId作为key存储，为了后置关联数据处理
+        // Cache records, stored with recordId as the key, for post-association data processing
         this._recordsCache[recordId] = {
           id: fieldId as string,
-          // 缓存起来 (Ref 指针引用)
+          // Cache it (Ref pointer reference)
           dottedObject: dotObj,
         };
         recordList.push(dotObj);
       } else {
         console.warn(
-          "行记录不存在id字段，recordId: %s, record: %s",
+          "Record does not exist ID field, recordId: %s, record: %s",
           recordId,
           JSON.stringify(record)
         );
       }
     }
-    // 以表名作为key构造json对象或数组
+    // Use the table name as the key to construct a json object or array
     if (tableConfig.format === Format.Array) {
       // tableObjects[tableConfig.datasheetName] = recordList;
       return recordList;
@@ -161,7 +163,7 @@ export class Transformer {
   }
 
   /**
-   * 处理关联数据
+   * Handle linked relation datasheet
    */
   public handleRelateRecord() {
     for (const [recordId, recordObj] of Object.entries(this._recordsCache)) {
@@ -174,7 +176,7 @@ export class Transformer {
               if (Object.keys(this._recordsCache).includes(cellValue)) {
                 rowValue.push(this._recordsCache[cellValue].id);
               } else {
-                console.warn("关联数据不存在: %s", recordId);
+                console.warn("Relation record does not exist: %s", recordId);
               }
             } else if (cell.length === 1) {
               rowValue = cellValue;

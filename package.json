@@ -1,6 +1,6 @@
 {
   "name": "apitable-settings-generator",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Generate settings with APITable power.",
   "main": "./dist/index.js",
   "bin": {
