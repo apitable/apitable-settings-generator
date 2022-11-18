@@ -1,4 +1,14 @@
+
+![cover](https://socialify.git.ci/apitable/apitable-settings-generator/image?description=1&font=Inter&language=1&name=1&pattern=Diagonal%20Stripes&stargazers=1&theme=Dark)
+
 # APITable Settings Generator
+
+[![npm](https://img.shields.io/npm/v/apitable-settings-generator)](https://www.npmjs.com/package/apitable-settings-generator)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/apitable/apitable-settings-generator/npm-publish)](https://github.com/apitable/apitable-settings-generator/actions)
+[![npm bundle size](https://img.shields.io/bundlephobia/min/apitable-settings-generator)](https://www.npmjs.com/package/apitable-settings-generator)
+[![npm](https://img.shields.io/npm/dm/apitable-settings-generator)](https://www.npmjs.com/package/apitable-settings-generator)
+
+
 
 A settings generator with APITable power.
 
