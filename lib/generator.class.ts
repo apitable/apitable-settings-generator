@@ -6,7 +6,7 @@ import {
 } from "apitable";
 import * as fs from "fs";
 import { resolve } from "path";
-import { IConfig, ITableConfig } from "./config.interface";
+import { IConfig } from "./config.interface";
 import { Transformer } from "./transfomer.class";
 
 export type RequestDataMap = {[datasheetId: string]: IRecord[]};
