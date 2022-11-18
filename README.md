@@ -9,7 +9,7 @@
 
 APITable Settings Generator convert APITable datasheet into JSON data.
 
-For example, you have APITable like this:
+For example, you have [APITable](https://apitable.com) like this:
 
 | name           | emoji |
 | -------------- | ----- |
