@@ -64,7 +64,6 @@ export class Generator {
     const rootDir = process.cwd();
     const outputPath = resolve(
       rootDir,
-      "../../",
       config.dirName,
       config.fileName
     );
