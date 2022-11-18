@@ -212,5 +212,10 @@ Generated settings `i18n.generated.json`:
 
 ## Conventions
 
+We make some convetion that help you do more magic work:
+
 - Ignore the column that name starts with `.`;
 - Ignore the Primary Key that valut starts with `.`;
+
+
+If you want to more features, please [new an issue](https://github.com/apitable/apitable-settings-generator/issues/new) for us.
