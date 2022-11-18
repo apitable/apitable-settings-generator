@@ -45,7 +45,7 @@ Run APITable Settings Generator (`asg`):
 
 ```bash
 # run in bash
-npx asg --config config.json --token ${HERE_IS_YOUR_APITABLE_TOKEN}
+npx apitable-settings-generator --config config.json --token ${HERE_IS_YOUR_APITABLE_TOKEN}
 ```
 
 Generated settings `i18n.generated.json`:
@@ -140,7 +140,7 @@ Run APITable Settings Generator (`asg`):
 
 ```bash
 # run in bash
-npx asg --config config.json --token ${HERE_IS_YOUR_APITABLE_TOKEN}
+npx apitable-settings-generator --config config.json --token ${HERE_IS_YOUR_APITABLE_TOKEN}
 ```
 
 Generated settings `i18n.generated.json`:
@@ -193,7 +193,7 @@ Run APITable Settings Generator (`asg`):
 
 ```bash
 # run in bash
-npx asg --config config.json --token ${HERE_IS_YOUR_APITABLE_TOKEN}
+npx apitable-settings-generator --config config.json --token ${HERE_IS_YOUR_APITABLE_TOKEN}
 ```
 
 Generated settings `i18n.en_US.generated.json`:
