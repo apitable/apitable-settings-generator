@@ -10,11 +10,19 @@
 
 
 
-A settings generator with APITable power.
+A settings generator with APITable online editing power.
+
+## Use Case
+
+- Localization
+- Features Flag
+- Software Settings
+- Game Development
+- ......
 
 ## Usage
 
-APITable Settings Generator provides 3 generated settings mode:
+APITable Settings Generator provides 3 generated settings format:
 
 - `rows` (default)
 - `columns`
