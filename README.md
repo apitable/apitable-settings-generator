@@ -1,4 +1,3 @@
-
 ![cover](https://socialify.git.ci/apitable/apitable-settings-generator/image?description=1&font=Inter&language=1&name=1&pattern=Diagonal%20Stripes&stargazers=1&theme=Dark)
 
 # APITable Settings Generator
@@ -8,9 +7,39 @@
 [![npm bundle size](https://img.shields.io/bundlephobia/min/apitable-settings-generator)](https://www.npmjs.com/package/apitable-settings-generator)
 [![npm](https://img.shields.io/npm/dm/apitable-settings-generator)](https://www.npmjs.com/package/apitable-settings-generator)
 
+APITable Settings Generator convert APITable datasheet into JSON data.
 
+For example, you have APITable like this:
 
-A settings generator with APITable online editing power.
+| name           | emoji |
+| -------------- | ----- |
+| jack_o_lantern | 🎃    |
+| christmas_tree | 🎄    |
+| fireworks      | 🎆    |
+| sparkler       | 🎇    |
+| firecracker    | 🧨    |
+
+It will generate JSON settings like this:
+
+```json
+{
+  "jack_o_lantern": {
+    "emoji": "🎃"
+  },
+  "christmas_tree": {
+    "emoji": "🎄"
+  },
+  "fireworks": {
+    "emoji": "🎆"
+  },
+  "sparkler": {
+    "emoji": "🎇"
+  },
+  "firecracker": {
+    "emoji": "🧨"
+  }
+}
+```
 
 ## Use Case
 
@@ -72,20 +101,18 @@ Generated settings `i18n.generated.json`:
 {
   "strings": {
     "login_title": {
-        "en_US": "Login APITable",
-        "zh_CN": "中文APITable",
+      "en_US": "Login APITable",
+      "zh_CN": "中文APITable"
     },
     "some text": {
-        "en_US": "some text en_US",
-        "zh_CN": "some text zh_CN",
+      "en_US": "some text en_US",
+      "zh_CN": "some text zh_CN"
     }
   }
 }
 ```
 
-
 ### Format: `Columns`
-
 
 You have this JSON config file `config.json`:
 
@@ -127,11 +154,9 @@ Generated settings `i18n.generated.json`:
       "login_title": "Login APITable",
       "some text": "some text en_US"
     }
-  } 
+  }
 }
 ```
-
-
 
 ### Format: `Array`
 
@@ -177,64 +202,5 @@ Generated settings `i18n.generated.json`:
       "zh_CN": "some text zh_CN"
     }
   ]
-}
-```
-
-
-
-## Future
-
-### TODO Format: `Column Files`
-
-This format will separate columns into different files.
-
-You have this JSON config file `config.json`:
-
-```json
-[
-  {
-    "dirName": "./generated",
-    "fileName": "i18n.*.generated.json",
-    "tables": {
-      {
-        "datasheetId": "dstbUhd5coNXQoXFD8",
-        "datasheetName": "strings",
-        "format": "column-files",
-        "params": {}
-      }
-    }
-  }
-]
-```
-
-Run APITable Settings Generator (`asg`):
-
-```bash
-# run in bash
-npx apitable-settings-generator --config config.json --token ${HERE_IS_YOUR_APITABLE_TOKEN}
-```
-
-Generated settings `i18n.en_US.generated.json`:
-
-```json
-{
-  "strings": {
-    "en_US": {
-      "login_title": "Login APITable",
-      "some text": "some text en_US"
-    }
-  } 
-}
-```
-
-Generated settings `i18n.zh_CN.generated.json`:
-```json
-{
-  "strings": {
-    "zh_CN": {
-      "login_title": "中文APITable",
-      "some text": "some text zh_CN"
-    }
-  } 
 }
 ```
