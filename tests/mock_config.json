@@ -1,0 +1,58 @@
+[
+  {
+    "dirName": "../generated/",
+    "fileName": "strings.rows.auto.json",
+    "tables": [
+      {
+        "datasheetId": "dstDEMO",
+        "datasheetName": "strings",
+        "format": "rows",
+        "params": {
+          "sort": "[JSON.stringify({ order: 'asc', field: 'id' }) as any]"
+        }
+      }
+    ]
+  },
+  {
+    "dirName": "../generated/",
+    "fileName": "strings.columns.auto.json",
+    "tables": [
+      {
+        "datasheetId": "dstDEMO",
+        "datasheetName": "strings",
+        "format": "columns",
+        "params": {
+          "sort": "[JSON.stringify({ order: 'asc', field: 'id' }) as any]"
+        }
+      }
+    ]
+  },
+  {
+    "dirName": "../generated/",
+    "fileName": "strings.array.auto.json",
+    "tables": [
+      {
+        "datasheetId": "dstDEMO",
+        "datasheetName": "strings",
+        "format": "array",
+        "params": {
+          "sort": "[JSON.stringify({ order: 'asc', field: 'id' }) as any]"
+        }
+      }
+    ]
+  },
+  {
+    "dirName": "../generated/",
+    "fileName": "strings.*.auto.json",
+    "tables": [
+      {
+        "datasheetId": "dstDEMO",
+        "datasheetName": "strings",
+        "format": "column-files",
+        "params": {
+          "sort": "[JSON.stringify({ order: 'asc', field: 'id' }) as any]"
+        }
+      }
+    ]
+  }
+]
