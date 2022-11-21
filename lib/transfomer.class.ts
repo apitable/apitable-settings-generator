@@ -1,13 +1,14 @@
 import { IFieldValueMap, IRecord } from "apitable";
 import * as dot from "dot-object";
 import { isArray, isString } from "lodash";
-import { Format } from "./config.interface";
+import { Format, IConfig, ITableConfig } from "./config.interface";
 import { RequestDataMap } from "./generator.class";
-import { IConfig, ITableConfig } from "./config.interface";
+
 interface CacheRecord {
   id: string;
   dottedObject: object;
 }
+
 interface SettingsResult {
   data: object;
   config: IConfig;
@@ -20,20 +21,21 @@ interface SettingsResult {
 export type SettingsResultMap = { [fileName: string]: SettingsResult };
 
 type CacheRecordsMap = { [key: string]: CacheRecord };
+
 /**
  * Data transformer, from requested data (IRecord) and configs (IConfig) to settings result (JSON).
  */
 export class Transformer {
   private _requestedData: RequestDataMap;
   private _configs: IConfig[];
-  private _recordsCache:  CacheRecordsMap = {};
+  private _recordsCache: CacheRecordsMap = {};
 
   generateSettings(): SettingsResultMap {
 
     const resultMap: SettingsResultMap = {};
 
     for (const config of this._configs) {
-      const result = this.parseTables(config.tables)
+      const result = this.parseTables(config.tables);
       resultMap[config.fileName] = {
         data: result,
         config: config
@@ -46,13 +48,12 @@ export class Transformer {
     return resultMap;
   }
 
-
   /**
    * parse multi tables
-   * 
+   *
    * @param tableConfigs configs
    */
-   public parseTables(tableConfigs: ITableConfig[]): object {
+  public parseTables(tableConfigs: ITableConfig[]): object {
     const tableObjects: { [key: string]: any } = {};
 
     // multi table process
@@ -146,7 +147,7 @@ export class Transformer {
 
           if (recordKey == 'id') continue; // ignore `id`
 
-          if (!retObj[recordKey]) retObj[recordKey] = {}
+          if (!retObj[recordKey]) retObj[recordKey] = {};
 
           const valObj = retObj[recordKey];
           const rowPrimaryKey = rObj['id'];

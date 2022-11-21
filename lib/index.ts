@@ -1,8 +1,9 @@
-import { Generator } from "./generator.class";
 import { createCommand } from "commander";
-const program = createCommand();
-import { name, version, description, homepage } from "../package.json";
+import { description, homepage, name, version } from "../package.json";
 import { IConfig } from "./config.interface";
+import { Generator } from "./generator.class";
+
+const program = createCommand();
 const fs = require("fs");
 
 program
@@ -30,7 +31,7 @@ program.parse();
 /**
  * generate, do it.
  */
- (async function main() {
+(async function main() {
 
   const options = program.opts();
 
@@ -38,10 +39,10 @@ program.parse();
   const token = options.token;
   const host = options.host || undefined;
 
-  const fileContent: string = await fs.readFileSync(configFilePath, 'utf-8');
+  const fileContent: string = fs.readFileSync(configFilePath, 'utf-8');
   const settings: IConfig[] = JSON.parse(fileContent) as IConfig[];
 
-  const gen = new Generator(settings,  token, host);
+  const gen = new Generator(settings, token, host);
 
   await gen.generate();
 })();
