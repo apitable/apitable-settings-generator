@@ -1,15 +1,16 @@
 import { IFieldValueMap, IRecord } from "apitable";
 import * as dot from "dot-object";
-import { isArray, isString } from "lodash";
-import { Format } from "./config.interface";
+import { camelCase, capitalize, forIn, isArray, isString, kebabCase, lowerCase } from "lodash";
+import { Format, IConfig, ITableConfig } from "./config.interface";
 import { RequestDataMap } from "./generator.class";
-import { IConfig, ITableConfig } from "./config.interface";
+
 interface CacheRecord {
   id: string;
   dottedObject: object;
 }
+
 interface SettingsResult {
-  data: object;
+  data: any;
   config: IConfig;
   // requestedData: IRecord[]; 
 }
@@ -20,20 +21,21 @@ interface SettingsResult {
 export type SettingsResultMap = { [fileName: string]: SettingsResult };
 
 type CacheRecordsMap = { [key: string]: CacheRecord };
+
 /**
  * Data transformer, from requested data (IRecord) and configs (IConfig) to settings result (JSON).
  */
 export class Transformer {
   private _requestedData: RequestDataMap;
   private _configs: IConfig[];
-  private _recordsCache:  CacheRecordsMap = {};
+  private _recordsCache: CacheRecordsMap = {};
 
   generateSettings(): SettingsResultMap {
 
     const resultMap: SettingsResultMap = {};
 
     for (const config of this._configs) {
-      const result = this.parseTables(config.tables)
+      const result = this.parseTables(config.tables);
       resultMap[config.fileName] = {
         data: result,
         config: config
@@ -46,13 +48,12 @@ export class Transformer {
     return resultMap;
   }
 
-
   /**
    * parse multi tables
-   * 
+   *
    * @param tableConfigs configs
    */
-   public parseTables(tableConfigs: ITableConfig[]): object {
+  public parseTables(tableConfigs: ITableConfig[]): object {
     const tableObjects: { [key: string]: any } = {};
 
     // multi table process
@@ -93,7 +94,6 @@ export class Transformer {
       const { fields, recordId } = record;
       if (fields.id !== undefined) {
         // if no ID field, ignore it.
-
         const fieldId = fields.id;
 
         // Remove the key used for comments at the beginning with ".", and then parse agia again
@@ -117,49 +117,11 @@ export class Transformer {
         );
       }
     }
+
     // Use the table name as the key to construct a json object or array
-    if (tableConfig.format === Format.Array) {
-      // tableObjects[tableConfig.datasheetName] = recordList;
-      return recordList;
-    } else if (tableConfig.format === Format.Rows) {
-      let bigObject: { [key: string]: any } = {};
-      for (const recordObj of recordList) {
-        const rObj = recordObj as { [key: string]: any };
-        const key = rObj["id"];
+    const context: Context = { recordList: recordList, tableConfig: tableConfig };
 
-        if (!tableConfig.id) {
-          // remove the "id"
-          delete rObj["id"];
-        }
-
-        bigObject[key] = rObj;
-      }
-      bigObject = dot.object(bigObject) as { [key: string]: any };
-      delete bigObject[""];
-      return bigObject;
-    } else if (tableConfig.format === Format.Columns) {
-      const retObj: { [key: string]: any } = {};
-
-      for (const record of recordList) {
-        const rObj = record as { [key: string]: any };
-        for (const recordKey in record) {
-
-          if (recordKey == 'id') continue; // ignore `id`
-
-          if (!retObj[recordKey]) retObj[recordKey] = {}
-
-          const valObj = retObj[recordKey];
-          const rowPrimaryKey = rObj['id'];
-
-          valObj[rowPrimaryKey] = rObj[recordKey];
-        }
-
-      }
-
-      return retObj;
-    }
-
-    throw new Error("Unknow format: " + tableConfig.format);
+    return FormatFactory.get(tableConfig.format).execute(context);
   }
 
   /**
@@ -180,7 +142,6 @@ export class Transformer {
               }
             } else if (cell.length === 1) {
               rowValue = cellValue;
-              continue;
             } else {
               rowValue.push(cellValue);
             }
@@ -189,5 +150,96 @@ export class Transformer {
         }
       }
     }
+  }
+}
+
+interface Context {
+  recordList: any[];
+  tableConfig?: ITableConfig;
+}
+
+interface IFormat {
+  execute(context: Context): any[] | { [key: string]: any };
+}
+
+class FormatArray implements IFormat {
+  execute(context: Context): any[] {
+    return context.recordList;
+  }
+}
+
+class FormatRows implements IFormat {
+  execute(context: Context): { [key: string]: any } {
+    const { recordList, tableConfig } = context;
+    let bigObject: { [key: string]: any } = {};
+
+    for (const recordObj of recordList) {
+      const rObj = recordObj as { [key: string]: any };
+      const key = rObj["id"];
+
+      if (!tableConfig!.id) {
+        // remove the "id"
+        delete rObj["id"];
+      }
+
+      bigObject[key] = rObj;
+    }
+    bigObject = dot.object(bigObject) as { [key: string]: any };
+    delete bigObject[""];
+    return bigObject;
+  }
+}
+
+class FormatColumns {
+  execute(context: Context): { [key: string]: any } {
+    const { recordList } = context;
+    const retObj: { [key: string]: any } = {};
+
+    for (const record of recordList) {
+      const rObj = record as { [key: string]: any };
+      for (const recordKey in record) {
+
+        if (recordKey == 'id') continue; // ignore `id`
+
+        if (!retObj[recordKey]) retObj[recordKey] = {};
+
+        const valObj = retObj[recordKey];
+        const rowPrimaryKey = rObj['id'];
+
+        valObj[rowPrimaryKey] = rObj[recordKey];
+      }
+    }
+    return retObj;
+  }
+}
+
+class FormatFactory {
+  private static _services: { [s: string]: IFormat } = {};
+
+  static {
+    this._services[Format.Array] = new FormatArray();
+    this._services[Format.Rows] = new FormatRows();
+    this._services[Format.Columns] = new FormatColumns();
+    this._services[Format.Properties_Files] = new FormatColumns();
+
+    // adapt to more naming styles
+    forIn(this._services, (value, key) => {
+      // lowerCase: fooBar => foo bar ; Bar => bar
+      this._services[lowerCase(key)] = value;
+      // camelCase: Foo Bar => fooBar ; Foo Bar => fooBar
+      this._services[camelCase(key)] = value;
+      // kebabCase: Foo Bar => foo-bar
+      this._services[kebabCase(key)] = value;
+      // capitalize: FOOBar => Foobar
+      this._services[capitalize(key)] = value;
+    });
+  }
+
+  static get(type: string): IFormat {
+    const service: IFormat = this._services[type];
+    if (!service) {
+      throw new Error("Unknown format: " + type);
+    }
+    return service;
   }
 }
