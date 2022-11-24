@@ -54,5 +54,28 @@
         }
       }
     ]
+  },
+  {
+    "dirName": "../generated/",
+    "fileName": "i18n_*.properties",
+    "languageList": [
+      "zh_CN",
+      "en_US"
+    ],
+    "tables": [
+      {
+        "datasheetId": "dstDEMO",
+        "datasheetName": "i18n_strings",
+        "format": "properties-files",
+        "params": {
+          "sort": [
+            {
+              "order": "asc",
+              "field": "id"
+            }
+          ]
+        }
+      }
+    ]
   }
 ]
