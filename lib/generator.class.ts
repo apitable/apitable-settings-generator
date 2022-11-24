@@ -1,6 +1,6 @@
 import { APITable, IGetRecordsReqParams, IRecord, } from "apitable";
 import * as fs from "fs";
-import { forIn, join, keys, merge, template, templateSettings } from "lodash";
+import { forIn, join, keys, merge, replace } from "lodash";
 import * as path from "path";
 import { resolve } from "path";
 import { IConfig } from "./config.interface";
@@ -101,7 +101,6 @@ export class Generator {
       mergeData = merge(mergeData, tableData[key]);
     }
 
-    templateSettings.interpolate = /{{([\s\S]+?)}}/g;
     const languageList: string[] = [];
     if (config.languageList) {
       languageList.push(...config.languageList);
@@ -112,11 +111,11 @@ export class Generator {
     console.log("Waiting for the list of output languages: %s", languageList);
 
     for (const language of languageList) {
-      const compiled = template(config.fileName);
+      const fileName = replace(config.fileName, '\*', language);
       const outputPath = resolve(
         rootDir,
         config.dirName,
-        compiled({ language })
+        fileName
       );
       console.log("Start writing file: %s", outputPath);
 

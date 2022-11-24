@@ -57,7 +57,7 @@
   },
   {
     "dirName": "../generated/",
-    "fileName": "i18n_{{ language }}.properties",
+    "fileName": "i18n_*.properties",
     "languageList": [
       "zh_CN",
       "en_US"
