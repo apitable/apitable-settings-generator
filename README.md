@@ -50,6 +50,7 @@ It will generate JSON settings like this:
 
 - Localization
 - Features Flag
+- Remote Config
 - Software Settings
 - Game Development
 - ......
