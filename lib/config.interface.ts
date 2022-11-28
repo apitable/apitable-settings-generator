@@ -5,6 +5,7 @@ export enum Format {
   Rows = "rows",
   Columns = "columns",
   Properties_Files = "properties-files",
+  Column_Files = "column-files"
 }
 
 export interface ITableConfig {
@@ -22,7 +23,9 @@ export interface IConfig {
    * Optional property, when you have many internationalized language settings,
    * then you can specify parameters to control the list of accepted languages.
    *
-   * Unfortunately, this property currently supports `.properties` type files
+   * this property currently supports the `format` format list:
+   *  - properties-files
+   *  - column-files
    *
    * example：["zh_CN", "en_US"]
    */

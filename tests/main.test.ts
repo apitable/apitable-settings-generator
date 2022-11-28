@@ -1,8 +1,9 @@
 import { IConfig } from "../lib/config.interface";
-import { RequestDataMap } from "../lib/generator.class";
+import { Generator, RequestDataMap } from "../lib/generator.class";
 import { SettingsResultMap, Transformer } from "../lib/transfomer.class";
 
 const mockConfigs = require('./mock_config.json') as IConfig[];
+const mockConfigByColumnFiles = require('./mock_config_column_files.json') as IConfig[];
 const mockRequests = require('./mock_request.json');
 
 const requestedDataMap: RequestDataMap = {};
@@ -104,6 +105,22 @@ describe("test APITable settings generator", () => {
       'en_US': expect.any(Object),
       'zh_CN': expect.any(Object),
     });
+  });
+
+  it("call format: column-files transform ok", async () => {
+    const pfConfig = mockConfigByColumnFiles[0];
+
+    const tf: Transformer = new Transformer([pfConfig], requestedDataMap);
+    expect(pfConfig).not.toBeUndefined();
+    expect(mockConfigByColumnFiles).not.toBeUndefined();
+
+    const resultMap: SettingsResultMap = tf.generateSettings();
+    expect(resultMap).not.toBeNull();
+    expect(resultMap).not.toBeUndefined();
+
+    const gen = new Generator(mockConfigByColumnFiles, "token");
+    // @ts-expect-error
+    await expect(gen.checkConfigTables(pfConfig.tables)).rejects.toThrow(Error);
   });
 
   it("should multiple settings transform ok", async () => {
