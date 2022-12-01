@@ -1,0 +1,26 @@
+[
+  {
+    "dirName": "./generated/",
+    "fileName": "i18n.*.generated.json",
+    "tables": [
+      {
+        "datasheetId": "dstDEMO",
+        "datasheetName": "i18n_strings",
+        "format": "column-files",
+        "params": {
+          "sort": [
+            {
+              "order": "asc",
+              "field": "id"
+            }
+          ]
+        }
+      },
+      {
+        "datasheetId": "dstDEMO1",
+        "datasheetName": "i18n_strings1",
+        "format": "properties-files"
+      }
+    ]
+  }
+]

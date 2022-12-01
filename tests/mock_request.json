@@ -26,5 +26,33 @@
         }
       ]
     }
+  },
+  "dstDEMO1": {
+    "code": 200,
+    "success": true,
+    "message": "Request Success",
+    "data": {
+      "total": 2,
+      "pageNum": 1,
+      "pageSize": 2,
+      "records": [
+        {
+          "recordId": "recrtfi2tJ1hH",
+          "fields": {
+            "id": "login_title",
+            "zh_CN": "中文APITable",
+            "en_US": "Login APITable"
+          }
+        },
+        {
+          "recordId": "recJOol6V6EPD",
+          "fields": {
+            "id": "some_text",
+            "zh_CN": "some text zh_CN",
+            "en_US": "some text en_US"
+          }
+        }
+      ]
+    }
   }
 }

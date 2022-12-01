@@ -1,9 +1,9 @@
 import { APITable, IGetRecordsReqParams, IRecord, } from "apitable";
 import * as fs from "fs";
-import { forIn, join, keys, merge, replace } from "lodash";
+import { forIn, join, keys, map, merge, pick, replace, union, uniq } from "lodash";
 import * as path from "path";
 import { resolve } from "path";
-import { IConfig } from "./config.interface";
+import { Format, IConfig, ITableConfig } from "./config.interface";
 import { Transformer } from "./transfomer.class";
 
 export type RequestDataMap = { [datasheetId: string]: IRecord[] };
@@ -14,7 +14,7 @@ export type RequestDataMap = { [datasheetId: string]: IRecord[] };
 export class Generator {
   private _api: APITable;
 
-  private _configs: IConfig[];
+  private readonly _configs: IConfig[];
 
   // private _transformer: Transformer;
 
@@ -47,17 +47,27 @@ export class Generator {
     const resultMap = tf.generateSettings();
 
     for (const fileName in resultMap) {
-      console.log("\n==========Getting start============");
-      const begin = +new Date();
-
       const result = resultMap[fileName];
       const { config, data } = result;
+
+      const { result: checkResult, formats } = await this.checkConfigTables(config.tables);
+      if (!checkResult) {
+        // Skip the generated file if the check does not pass
+        continue;
+      }
+
+      console.log("\n==========Getting start============");
+      const begin = +new Date();
 
       const fileExt = path.parse(config.fileName).ext;
       if ('.properties' === fileExt) {
         await this.writePropertiesFile(config, data);
       } else {
-        await this.writeJsonFile(config, data);
+        if (formats.indexOf(Format.Column_Files) != -1) {
+          await this.writeSplitJsonFile(config, data);
+        } else {
+          await this.writeJsonFile(config, data);
+        }
       }
 
       const end = +new Date();
@@ -66,25 +76,66 @@ export class Generator {
     }
   }
 
+  private async checkConfigTables(tables: ITableConfig[]): Promise<{ result: boolean, formats: Format[] }> {
+    const formats: Format[] = uniq(tables.map(table => table.format));
+
+    if (formats.length > 1 && formats.indexOf(Format.Column_Files) != -1) {
+      throw new Error(`Format error: column-files does not support mixed mode, error value [${formats}]`);
+    }
+
+    return { result: true, formats };
+  }
+
   /**
    * write to JSON file
    * @param config config
    * @param tableData
    */
-  private async writeJsonFile(config: IConfig, tableData: object) {
+  private async writeJsonFile(config: IConfig, tableData: any) {
     const rootDir = process.cwd();
     const outputPath = resolve(rootDir, config.dirName, config.fileName);
 
     console.log("Start writing file: %s", outputPath);
 
     // write into file
-    const outputJson = JSON.stringify(tableData, null, 4);
-    fs.writeFile(outputPath, outputJson, (err) => {
-      if (err !== null) {
-        console.error("Write failed：", err);
-        return;
-      }
-    });
+    const outputData = JSON.stringify(tableData, null, 4);
+    this.writeFile(outputPath, outputData);
+  }
+
+  /**
+   * write to JSON file By Language Split
+   * @param config config
+   * @param tableData
+   */
+  private async writeSplitJsonFile(config: IConfig, tableData: any) {
+    const rootDir = process.cwd();
+
+    const outputKeys: string[] = keys(tableData);
+    const languageList: string[] = [];
+    if (config.languageList) {
+      languageList.push(...config.languageList);
+    } else {
+      const allLanguage = Object.entries(tableData).reduce((pre, cur) => {
+        let [_, v]: any = cur;
+        return union(pre, keys(v));
+      }, [] as string[]);
+      languageList.push(...allLanguage);
+    }
+
+    console.log("Waiting for the list of output languages: %s", languageList);
+
+    for (const language of languageList) {
+      const fileName = replace(config.fileName, '\*', language);
+      const outputPath = resolve(rootDir, config.dirName, fileName);
+
+      console.log("Start writing file: %s", outputPath);
+
+      const pickData = pick(tableData, map(outputKeys, value => `${value}.${language}`));
+
+      // write into file
+      const outputData = JSON.stringify(pickData, null, 4);
+      this.writeFile(outputPath, outputData);
+    }
   }
 
   /**
@@ -112,11 +163,8 @@ export class Generator {
 
     for (const language of languageList) {
       const fileName = replace(config.fileName, '\*', language);
-      const outputPath = resolve(
-        rootDir,
-        config.dirName,
-        fileName
-      );
+      const outputPath = resolve(rootDir, config.dirName, fileName);
+
       console.log("Start writing file: %s", outputPath);
 
       const formatStr: string[] = [];
@@ -127,13 +175,17 @@ export class Generator {
 
       // write into file
       const outputData = join(formatStr, '\r\n');
-      fs.writeFile(outputPath, outputData, (err) => {
-        if (err !== null) {
-          console.error("Write failed：", err);
-          return;
-        }
-      });
+      this.writeFile(outputPath, outputData);
     }
+  }
+
+  private writeFile(path: fs.PathOrFileDescriptor, data: string | NodeJS.ArrayBufferView) {
+    fs.writeFile(path, data, (err) => {
+      if (err !== null) {
+        console.error("Write failed：", err);
+        return;
+      }
+    });
   }
 
   /**
@@ -141,7 +193,7 @@ export class Generator {
    * @param datasheetId Datasheet ID
    * @param reqParams
    */
-  async requestData(
+  private async requestData(
     datasheetId: string,
     reqParams?: IGetRecordsReqParams
   ): Promise<IRecord[]> {

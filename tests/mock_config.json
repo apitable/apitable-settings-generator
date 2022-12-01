@@ -1,6 +1,6 @@
 [
   {
-    "dirName": "../generated/",
+    "dirName": "./tmp/generated/",
     "fileName": "strings.rows.auto.json",
     "tables": [
       {
@@ -14,7 +14,7 @@
     ]
   },
   {
-    "dirName": "../generated/",
+    "dirName": "./tmp/generated/",
     "fileName": "strings.columns.auto.json",
     "tables": [
       {
@@ -28,7 +28,7 @@
     ]
   },
   {
-    "dirName": "../generated/",
+    "dirName": "./tmp/generated/",
     "fileName": "strings.array.auto.json",
     "tables": [
       {
@@ -42,7 +42,7 @@
     ]
   },
   {
-    "dirName": "../generated/",
+    "dirName": "./tmp/generated/",
     "fileName": "strings.*.auto.json",
     "tables": [
       {
@@ -56,7 +56,7 @@
     ]
   },
   {
-    "dirName": "../generated/",
+    "dirName": "./tmp/generated/",
     "fileName": "i18n_*.properties",
     "languageList": [
       "zh_CN",
@@ -67,6 +67,25 @@
         "datasheetId": "dstDEMO",
         "datasheetName": "i18n_strings",
         "format": "properties-files",
+        "params": {
+          "sort": [
+            {
+              "order": "asc",
+              "field": "id"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "dirName": "./tmp/generated/",
+    "fileName": "i18n.*.generated.json",
+    "tables": [
+      {
+        "datasheetId": "dstDEMO",
+        "datasheetName": "i18n_strings",
+        "format": "column-files",
         "params": {
           "sort": [
             {

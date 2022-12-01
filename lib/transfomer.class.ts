@@ -6,11 +6,11 @@ import { RequestDataMap } from "./generator.class";
 
 interface CacheRecord {
   id: string;
-  dottedObject: object;
+  dottedObject: any;
 }
 
 interface SettingsResult {
-  data: any;
+  data: { [key: string]: any };
   config: IConfig;
   // requestedData: IRecord[]; 
 }
@@ -26,12 +26,16 @@ type CacheRecordsMap = { [key: string]: CacheRecord };
  * Data transformer, from requested data (IRecord) and configs (IConfig) to settings result (JSON).
  */
 export class Transformer {
-  private _requestedData: RequestDataMap;
-  private _configs: IConfig[];
+  private readonly _requestedData: RequestDataMap;
+  private readonly _configs: IConfig[];
   private _recordsCache: CacheRecordsMap = {};
 
-  generateSettings(): SettingsResultMap {
+  constructor(configs: IConfig[], requestedDataMap: RequestDataMap) {
+    this._configs = configs;
+    this._requestedData = requestedDataMap;
+  }
 
+  generateSettings(): SettingsResultMap {
     const resultMap: SettingsResultMap = {};
 
     for (const config of this._configs) {
@@ -40,7 +44,6 @@ export class Transformer {
         data: result,
         config: config
       };
-
     }
     // relation datasheets replacement
     this.handleRelateRecord();
@@ -53,7 +56,7 @@ export class Transformer {
    *
    * @param tableConfigs configs
    */
-  public parseTables(tableConfigs: ITableConfig[]): object {
+  public parseTables(tableConfigs: ITableConfig[]): { [key: string]: any } {
     const tableObjects: { [key: string]: any } = {};
 
     // multi table process
@@ -62,16 +65,10 @@ export class Transformer {
       const result = this.parseTable(tableConfig, records);
 
       tableObjects[tableConfig.datasheetName] = result;
-
     }
-    const res = dot.object(tableObjects) as { [key: string]: any };
-    delete res[""];
+    const res = dot.object(tableObjects);
+    dot.remove("", res);
     return res;
-  }
-
-  constructor(configs: IConfig[], requestedDataMap: RequestDataMap) {
-    this._configs = configs;
-    this._requestedData = requestedDataMap;
   }
 
   private filter(obj: IFieldValueMap) {
@@ -88,7 +85,7 @@ export class Transformer {
   public parseTable(tableConfig: ITableConfig, records: IRecord[]) {
     const recordList: object[] = [];
 
-    console.log("Table:[%s], Lines: %d", tableConfig.datasheetName, records.length);
+    console.log("Table:[%s], Lines: %d", tableConfig.datasheetName, records?.length);
     // loop the records
     for (const record of records) {
       const { fields, recordId } = record;
@@ -97,11 +94,9 @@ export class Transformer {
         const fieldId = fields.id;
 
         // Remove the key used for comments at the beginning with ".", and then parse agia again
-        const dotObj = dot.object(this.filter(fields)) as {
-          [key: string]: any;
-        };
+        const dotObj = dot.object(this.filter(fields));
         // remove empty key
-        delete dotObj[""];
+        dot.remove("", dotObj);
         // Cache records, stored with recordId as the key, for post-association data processing
         this._recordsCache[recordId] = {
           id: fieldId as string,
@@ -184,8 +179,8 @@ class FormatRows implements IFormat {
 
       bigObject[key] = rObj;
     }
-    bigObject = dot.object(bigObject) as { [key: string]: any };
-    delete bigObject[""];
+    bigObject = dot.object(bigObject);
+    dot.remove("", bigObject);
     return bigObject;
   }
 }
@@ -199,7 +194,10 @@ class FormatColumns {
       const rObj = record as { [key: string]: any };
       for (const recordKey in record) {
 
-        if (recordKey == 'id') continue; // ignore `id`
+        if (recordKey == 'id') {
+          // ignore `id`
+          continue;
+        }
 
         if (!retObj[recordKey]) retObj[recordKey] = {};
 
@@ -221,6 +219,7 @@ class FormatFactory {
     this._services[Format.Rows] = new FormatRows();
     this._services[Format.Columns] = new FormatColumns();
     this._services[Format.Properties_Files] = new FormatColumns();
+    this._services[Format.Column_Files] = new FormatColumns();
 
     // adapt to more naming styles
     forIn(this._services, (value, key) => {
