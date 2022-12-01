@@ -57,11 +57,13 @@ It will generate JSON settings like this:
 
 ## Usage
 
-APITable Settings Generator provides 3 generated settings format:
+APITable Settings Generator provides 5 generated settings format:
 
 - `rows` (default)
 - `columns`
 - `array`
+- `column-files`
+- `properties-files`
 
 Assume you have this APITable:
 
