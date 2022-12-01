@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import { IConfig } from "../lib/config.interface";
 import { Generator, RequestDataMap } from "../lib/generator.class";
 import { SettingsResultMap, Transformer } from "../lib/transfomer.class";
@@ -13,6 +14,18 @@ for (const fileName in mockRequests) {
 }
 
 describe("test APITable settings generator", () => {
+
+  const TMP_PATH = './tmp';
+  const TMP_GENERATED_PATH = TMP_PATH + '/generated';
+
+  beforeEach(() => {
+    fs.mkdirSync(TMP_GENERATED_PATH, { recursive: true });
+  });
+
+  afterEach(() => {
+    fs.rmSync(TMP_PATH, { recursive: true });
+  });
+
   it("should mock data ok", async () => {
     expect(mockConfigs[0].fileName).toEqual("strings.rows.auto.json");
     expect(mockConfigs[0].tables[0].datasheetId).toEqual("dstDEMO");
@@ -121,6 +134,46 @@ describe("test APITable settings generator", () => {
     const gen = new Generator(mockConfigByColumnFiles, "token");
     // @ts-expect-error
     await expect(gen.checkConfigTables(pfConfig.tables)).rejects.toThrow(Error);
+  });
+
+  it("call format: column-files generated file ok", async () => {
+    const pfConfig = mockConfigs[5];
+
+    const tf: Transformer = new Transformer([pfConfig], requestedDataMap);
+    expect(pfConfig).not.toBeUndefined();
+    expect(mockConfigByColumnFiles).not.toBeUndefined();
+
+    const resultMap: SettingsResultMap = tf.generateSettings();
+    expect(resultMap).not.toBeNull();
+    expect(resultMap).not.toBeUndefined();
+
+    const gen = new Generator(mockConfigByColumnFiles, "token");
+
+    for (const fileName in resultMap) {
+      const result = resultMap[fileName];
+      const { config, data } = result;
+      // @ts-expect-error
+      await gen.writeSplitJsonFile(config, data);
+    }
+
+    await new Promise((r) => setTimeout(r, 1500));
+
+    const i18n1: string = JSON.parse(fs.readFileSync(TMP_GENERATED_PATH + '/i18n.en_US.generated.json', 'utf-8'));
+    const i18n2: string = JSON.parse(fs.readFileSync(TMP_GENERATED_PATH + '/i18n.zh_CN.generated.json', 'utf-8'));
+
+    expect(i18n1).not.toBeUndefined();
+    expect(i18n1).toMatchObject({
+      'i18n_strings': {
+        'en_US': expect.any(Object)
+      },
+    });
+
+    expect(i18n2).not.toBeUndefined();
+    expect(i18n2).toMatchObject({
+      'i18n_strings': {
+        'zh_CN': expect.any(Object)
+      },
+    });
   });
 
   it("should multiple settings transform ok", async () => {
