@@ -211,6 +211,133 @@ Generated settings `i18n.generated.json`:
 }
 ```
 
+### Format: `Column Files`
+
+This format will separate columns into different files.
+
+You have this JSON config file `config.json`:
+
+```json
+[
+  {
+    "dirName": "./generated",
+    "fileName": "i18n.*.generated.json",
+    "tables": {
+      {
+        "datasheetId": "dstbUhd5coNXQoXFD8",
+        "datasheetName": "strings",
+        "format": "column-files",
+        "params": {}
+      }
+    }
+  }
+]
+```
+
+Run APITable Settings Generator (`asg`):
+
+```bash
+# run in bash
+npx apitable-settings-generator --config config.json --token ${HERE_IS_YOUR_APITABLE_TOKEN}
+```
+
+Generated settings `i18n.en_US.generated.json`:
+
+```json
+{
+  "strings": {
+    "en_US": {
+      "login_title": "Login APITable",
+      "some text": "some text en_US"
+    }
+  }
+}
+```
+
+Generated settings `i18n.zh_CN.generated.json`:
+
+```json
+{
+  "strings": {
+    "zh_CN": {
+      "login_title": "中文APITable",
+      "some text": "some text zh_CN"
+    }
+  }
+}
+```
+
+### Format: `Properties Files`
+
+`.properties` is a file extension for files that store configurable parameters for an application. They can also store strings for internationalization and localization, and such files are called Property Resource Bundles.
+
+Usually the format of the file contents is `key=value`.
+
+So the files need to be saved according to the different languages when they are generated
+
+You have this JSON config file `config.json`:
+```typescript
+[
+  {
+    "dirName": "./generated",
+    "fileName": "i18n_*.properties",
+    "languageList"?: [
+      "zh_CN",
+      "en_US"
+    ],
+    "tables": [
+      {
+        "datasheetId": "dstbUhd5coNXQoXFD8",
+        "datasheetName": "i18n",
+        "format": "properties-files",
+        "params"?: {...}
+      }
+    ]
+  }
+]
+```
+
+> **Note:** We have provided an interesting parameter `languageList` here.
+> when you have many internationalized language settings, then you can specify parameters to control the list of accepted languages.
+>
+> example：
+>  languageList:["zh_CN"]
+
+Run APITable Settings Generator (`asg`):
+```bash
+# run in bash
+npx apitable-settings-generator --config config.json --token ${HERE_IS_YOUR_APITABLE_TOKEN}
+```
+
+Generated settings `i18n_en_US.properties`:
+```properties
+long_text=Hello apitable
+short_text=Hello
+```
+
+Generated settings `i18n_zh_CN.properties`:
+```properties
+long_text=你好 apitable
+short_text=你好
+```
+
+Tips：
+1. When you have the following list of languages
+
+```
+i18n_en_US.properties
+i18n_zh_CN.properties
+```
+
+When you only need the `zh_CN` configuration package, you can now use the `languageList` attribute to control the output files, e.g.
+
+```
+...
+languageList: ['zh-CN']
+...
+```
+Now only the language file `i18n_zh_CN.properties` you specified will be output
+
 ## Conventions
 
 We make some convetion that help you do more magic work:
