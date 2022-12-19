@@ -83,15 +83,14 @@ You have this JSON config file `config.json`:
   {
     "dirName": "./generated",
     "fileName": "i18n.generated.json",
-    "tables": {
+    "tables": [
       {
         "datasheetId": "dstbUhd5coNXQoXFD8",
         "datasheetName": "strings",
         "format": "rows",
-        "params": {
-        }
+        "params": {}
       }
-    }
+    ]
   }
 ]
 ```
@@ -129,15 +128,14 @@ You have this JSON config file `config.json`:
   {
     "dirName": "./generated",
     "fileName": "i18n.generated.json",
-    "tables": {
+    "tables": [
       {
         "datasheetId": "dstbUhd5coNXQoXFD8",
         "datasheetName": "strings",
         "format": "columns",
-        "params": {
-        }
+        "params": {}
       }
-    }
+    ]
   }
 ]
 ```
@@ -175,14 +173,14 @@ You have this JSON config file `config.json`:
   {
     "dirName": "./generated",
     "fileName": "i18n.generated.json",
-    "tables": {
+    "tables": [
       {
         "datasheetId": "dstbUhd5coNXQoXFD8",
         "datasheetName": "strings",
         "format": "array",
         "params": {}
       }
-    }
+    ]
   }
 ]
 ```
@@ -224,14 +222,14 @@ You have this JSON config file `config.json`:
   {
     "dirName": "./generated",
     "fileName": "i18n.*.generated.json",
-    "tables": {
+    "tables": [
       {
         "datasheetId": "dstbUhd5coNXQoXFD8",
         "datasheetName": "strings",
         "format": "column-files",
         "params": {}
       }
-    }
+    ]
   }
 ]
 ```
